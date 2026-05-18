@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Stock Ojo Dulce">
+  <meta name="theme-color" content="#e8194b">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icono-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icono-180.png">
+  <title>Stock · Ojo Dulce</title>
+<link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rojo:#e8194b;--rojo-d:#c01040;--rosa:#fff0f5;--rosa-m:#ffd6e7;
+  --verde:#1a9a5a;--verde-l:#e6f9f0;--text:#1a0810;--text2:#7a4060;
+  --shadow:0 4px 20px rgba(232,25,75,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#f8f0f5;min-height:100vh;padding-bottom:30px}
+body.dark{background:#130810;--rosa:#1e0f18;--rosa-m:#3a1528;--text:#f0d0da;--text2:#c090a8;--shadow:0 4px 20px rgba(0,0,0,0.3)}
+body.dark .header{background:linear-gradient(145deg,#a01030,#700020)}
+body.dark .card{background:#2a1520;border-color:#4a2535}
+body.dark .card-name{color:#f0d0da}
+body.dark .note-input{background:#3a1525;border-color:#5a2535;color:#f0d0da}
+body.dark .sec-header{background:#2a1520;border-color:#4a2535}
+body.dark .sec-title-txt{color:#f0d0da}
+body.dark .stats-bar{background:#2a1520}
+body.dark .stat-lbl{color:#c090a8}
+body.dark .stat-val{color:#f0d0da}
+body.dark .share-btn{background:#2a1520;border-color:#4a2535;color:#f080a0}
+body.dark .modal-inner{background:#2a1520}
+body.dark .modal-title{color:#f0d0da}
+body.dark .modal-sub{color:#c090a8}
+body.dark .note-label{color:#c090a8}
+body.dark .done-btn{background:#1a9a5a}
+body.dark .tog-dark.on{background:#e8194b}
+
+/* HEADER */
+.header{background:linear-gradient(145deg,var(--rojo),var(--rojo-d));padding:20px 20px 28px;border-radius:0 0 32px 32px;text-align:center;box-shadow:0 6px 24px rgba(232,25,75,0.35);position:relative}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.h-title{font-family:'Paytone One',sans-serif;font-size:22px;color:#fff;letter-spacing:0.5px}
+.h-title span{color:#ffd6e7}
+.h-btns{display:flex;gap:8px}
+.h-btn{background:rgba(255,255,255,0.18);border:none;border-radius:50%;width:36px;height:36px;font-size:17px;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.h-btn:active{opacity:0.7}
+.stats-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;background:rgba(255,255,255,0.15);border-radius:18px;padding:12px 10px;backdrop-filter:blur(8px)}
+.stat-item{text-align:center}
+.stat-val{font-size:22px;font-weight:900;color:#fff}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,0.75);font-weight:700;margin-top:1px}
+.stat-val.rok{color:#7effc4}
+.stat-val.rno{color:#ffb0c0}
+
+/* BUSCAR */
+.search-wrap{padding:14px 16px 0}
+.search{width:100%;padding:12px 16px 12px 40px;border-radius:16px;border:1.5px solid var(--rosa-m);background:#fff;font-size:14px;font-family:'Nunito',sans-serif;font-weight:600;color:var(--text);outline:none;box-shadow:0 2px 12px rgba(232,25,75,0.07)}
+body.dark .search{background:#2a1520;border-color:#4a2535;color:#f0d0da}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:28px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;margin-top:7px}
+.search:focus{border-color:var(--rojo)}
+
+/* FILTRO RÁPIDO */
+.filtros{display:flex;gap:8px;padding:12px 16px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.filtros::-webkit-scrollbar{display:none}
+.fpill{padding:7px 14px;border-radius:30px;font-size:12px;font-weight:800;background:#fff;border:1.5px solid var(--rosa-m);color:var(--text2);cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:all 0.18s}
+body.dark .fpill{background:#2a1520;border-color:#4a2535;color:#c090a8}
+.fpill.active{background:var(--rojo);color:#fff;border-color:var(--rojo)}
+
+/* SECCIONES */
+.secciones{padding:10px 16px}
+.seccion{margin-bottom:12px;border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+.sec-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.15s}
+.sec-header:active{background:var(--rosa)}
+.sec-left{display:flex;align-items:center;gap:10px}
+.sec-icon{font-size:26px}
+.sec-title-txt{font-size:15px;font-weight:800;color:var(--text)}
+.sec-right{display:flex;align-items:center;gap:8px}
+.sec-badge{font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px}
+.sec-badge.ok{background:var(--verde-l);color:var(--verde)}
+.sec-badge.falta{background:#fde8ee;color:var(--rojo)}
+.sec-arrow{font-size:12px;color:#ccc;transition:transform 0.25s}
+.sec-arrow.open{transform:rotate(90deg)}
+.sec-body{display:none;background:#fff;border-top:1px solid var(--rosa)}
+body.dark .sec-body{border-color:#3a1525}
+.sec-body.open{display:block}
+
+/* TARJETAS PRODUCTO */
+.prod-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--rosa);gap:14px;transition:background 0.15s;cursor:pointer;-webkit-tap-highlight-color:transparent}
+body.dark .prod-item{border-color:#3a1525}
+.prod-item:last-child{border-bottom:none}
+.prod-item:active{background:var(--rosa)}
+.prod-emoji{width:54px;height:54px;border-radius:16px;background:var(--rosa);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;transition:transform 0.2s}
+.prod-item.hay .prod-emoji{background:var(--verde-l)}
+.prod-item.no .prod-emoji{background:#fde8ee}
+.prod-info{flex:1;min-width:0}
+.prod-name{font-size:14px;font-weight:800;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-note{font-size:11px;color:var(--text2);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-note.falta-txt{color:var(--rojo)}
+/* Toggle grande */
+.tog-grande{width:60px;height:34px;border-radius:17px;border:none;cursor:pointer;position:relative;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:background 0.22s;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.tog-grande.on{background:var(--verde)}
+.tog-grande.off{background:#e0b0b8}
+body.dark .tog-grande.off{background:#6a3040}
+.tog-grande::after{content:'';position:absolute;width:26px;height:26px;border-radius:50%;background:#fff;top:4px;transition:left 0.22s;box-shadow:0 2px 6px rgba(0,0,0,0.2)}
+.tog-grande.on::after{left:30px}
+.tog-grande.off::after{left:4px}
+.tog-label{font-size:10px;font-weight:800;position:absolute;top:50%;transform:translateY(-50%)}
+.tog-grande.on .tog-si{left:8px;color:#fff}
+.tog-grande.off .tog-no{right:8px;color:#fff}
+
+/* MODAL NOTA */
+.overlay{display:none;position:fixed;inset:0;background:rgba(20,0,10,0.55);z-index:100;backdrop-filter:blur(4px)}
+.overlay.open{display:block}
+.modal-inner{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:28px 28px 0 0;z-index:101;padding:0 0 24px;transform:translateY(100%);transition:transform 0.3s cubic-bezier(.4,0,.2,1);max-width:500px;margin:0 auto}
+.modal-inner.open{transform:translateY(0)}
+.modal-handle{width:38px;height:4px;background:var(--rosa-m);border-radius:4px;margin:12px auto 0}
+.modal-top{padding:16px 20px 12px;border-bottom:1px solid var(--rosa)}
+body.dark .modal-top{border-color:#3a1525}
+.modal-emoji{font-size:40px;margin-bottom:6px;display:block;text-align:center}
+.modal-title{font-size:18px;font-weight:900;color:var(--text);text-align:center}
+.modal-sub{font-size:12px;color:var(--text2);font-weight:600;text-align:center;margin-top:2px}
+.modal-body{padding:16px 20px}
+.tog-grande-modal{width:80px;height:44px;border-radius:22px;border:none;cursor:pointer;position:relative;margin:0 auto 16px;display:block;transition:background 0.22s;box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+.tog-grande-modal.on{background:var(--verde)}
+.tog-grande-modal.off{background:#e8194b}
+.tog-grande-modal::after{content:'';position:absolute;width:36px;height:36px;border-radius:50%;background:#fff;top:4px;transition:left 0.22s;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.tog-grande-modal.on::after{left:40px}
+.tog-grande-modal.off::after{left:4px}
+.modal-status{font-size:15px;font-weight:800;text-align:center;margin-bottom:14px}
+.modal-status.on{color:var(--verde)}
+.modal-status.off{color:var(--rojo)}
+.note-label{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.note-input{width:100%;padding:12px 14px;border-radius:14px;border:1.5px solid var(--rosa-m);font-size:14px;font-family:'Nunito',sans-serif;font-weight:600;color:var(--text);background:var(--rosa);outline:none;resize:none}
+.note-input:focus{border-color:var(--rojo)}
+.done-btn{display:block;width:100%;padding:14px;background:var(--rojo);border:none;border-radius:16px;font-size:15px;font-weight:800;color:#fff;font-family:'Nunito',sans-serif;cursor:pointer;margin-top:12px;box-shadow:0 4px 16px rgba(232,25,75,0.35)}
+.done-btn:active{opacity:0.85}
+
+/* COMPARTIR */
+.share-btn{display:block;width:calc(100% - 32px);margin:8px 16px 0;padding:13px;background:#fff;border:1.5px solid var(--rosa-m);border-radius:16px;font-size:14px;font-weight:800;color:var(--rojo);font-family:'Nunito',sans-serif;cursor:pointer;text-align:center;box-shadow:0 2px 10px rgba(232,25,75,0.08)}
+.share-btn:active{background:var(--rosa)}
+
+.empty-search{text-align:center;padding:40px 20px;color:var(--text2);font-size:14px;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="h-title">OJO <span>DULCE</span> 📦</div>
+    <div class="h-btns">
+      <button class="h-btn" onclick="toggleDark()" title="Modo oscuro">🌙</button>
+      <button class="h-btn" onclick="compartirFalta()" title="Compartir">📋</button>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Total</div></div>
+    <div class="stat-item"><div class="stat-val rok" id="s-ok">0</div><div class="stat-lbl">✅ Hay</div></div>
+    <div class="stat-item"><div class="stat-val rno" id="s-no">0</div><div class="stat-lbl">❌ Falta</div></div>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <span class="search-icon">🔍</span>
+  <input class="search" id="buscador" placeholder="Buscar producto..." type="text" oninput="buscar(this.value)">
+</div>
+
+<div class="filtros">
+  <div class="fpill active" onclick="filtrar('todos',this)">Todo</div>
+  <div class="fpill" onclick="filtrar('falta',this)">❌ Falta</div>
+  <div class="fpill" onclick="filtrar('hay',this)">✅ Hay</div>
+</div>
+
+<div class="secciones" id="secciones"></div>
+<button class="share-btn" onclick="compartirFalta()">📋 Copiar lista de faltantes</button>
+
+<!-- OVERLAY + MODAL -->
+<div class="overlay" id="overlay" onclick="cerrarModal()"></div>
+<div class="modal-inner" id="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-top">
+    <span class="modal-emoji" id="m-emoji"></span>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-sub" id="m-sub"></div>
+  </div>
+  <div class="modal-body">
+    <button class="tog-grande-modal off" id="m-tog" onclick="flipModal()"></button>
+    <div class="modal-status off" id="m-status">❌ No hay</div>
+    <div class="note-label">📝 Nota (opcional — ej: "Comprar 2 kilos")</div>
+    <textarea class="note-input" id="m-note" rows="2" placeholder="Ej: Comprar en el mercado, falta 1 kilo..."></textarea>
+    <button class="done-btn" onclick="guardarModal()">✅ Guardar</button>
+  </div>
+</div>
+
+<script>
+var INV = [
+  {cat:"Fruteria", icon:"🍋", items:[
+    {n:"Limones",e:"🍋",v:1,nota:""},{n:"Repollo",e:"🥬",v:0,nota:""},{n:"Chile rojo",e:"🌶️",v:1,nota:""},
+    {n:"Tomatillo",e:"🍅",v:1,nota:""},{n:"Elote",e:"🌽",v:0,nota:""},{n:"Fresa",e:"🍓",v:1,nota:""},
+    {n:"Mango",e:"🥭",v:0,nota:""},{n:"Platano",e:"🍌",v:0,nota:""}
+  ]},
+  {cat:"Desechable", icon:"🥤", items:[
+    {n:"Vaso 10oz",e:"🥤",v:1,nota:""},{n:"Vaso 12oz",e:"🥤",v:1,nota:""},{n:"Vaso 16oz",e:"🥤",v:0,nota:""},
+    {n:"Vaso 5 1/2",e:"🥤",v:1,nota:""},{n:"Vaso termico 10oz",e:"☕",v:1,nota:""},{n:"Vaso termico 12oz",e:"☕",v:1,nota:""},
+    {n:"Tenedor mediano",e:"🍴",v:1,nota:""},{n:"Cuchara mediana",e:"🥄",v:1,nota:""},{n:"Popote",e:"🧃",v:1,nota:""},
+    {n:"Palo mangonada",e:"🍡",v:1,nota:""},{n:"Servilleta",e:"🧻",v:1,nota:""},{n:"Charola 066",e:"📦",v:1,nota:""},
+    {n:"Charola 855",e:"📦",v:1,nota:""},{n:"Charola 9h",e:"📦",v:1,nota:""},{n:"Portavasos",e:"⭕",v:1,nota:""}
+  ]},
+  {cat:"Fritura", icon:"🍟", items:[
+    {n:"Huesito",e:"🦴",v:1,nota:""},{n:"Cheeto naranja",e:"🧡",v:1,nota:""},{n:"Riquecho hot",e:"🌶️",v:1,nota:""},
+    {n:"Duro",e:"🍪",v:1,nota:""},{n:"Tostito",e:"🌮",v:1,nota:""},{n:"Nacho",e:"🧀",v:0,nota:""},{n:"Conchitas",e:"🐚",v:1,nota:""}
+  ]},
+  {cat:"Complementos", icon:"🧴", items:[
+    {n:"Salsa Valentina",e:"🌶️",v:1,nota:""},{n:"Salsa botanera",e:"🌶️",v:1,nota:""},{n:"Catsup",e:"🍅",v:1,nota:""},
+    {n:"Mayonesa",e:"🫙",v:1,nota:""},{n:"Mantequilla",e:"🧈",v:1,nota:""},{n:"Chile limon",e:"🍋",v:1,nota:""},
+    {n:"Chamoy",e:"🫙",v:1,nota:""},{n:"Sal",e:"🧂",v:1,nota:""},{n:"Cueritos",e:"🫙",v:1,nota:""},
+    {n:"Queso amarillo",e:"🧀",v:1,nota:""},{n:"Crema liquida",e:"🥛",v:1,nota:""},{n:"Hersheys chocolate",e:"🍫",v:1,nota:""},
+    {n:"Hersheys fresa",e:"🍓",v:0,nota:""},{n:"Lechera",e:"🥛",v:1,nota:""},{n:"Dulce de leche",e:"🫙",v:1,nota:""},
+    {n:"Cobertura chocolate",e:"🍫",v:1,nota:""},{n:"Nutella",e:"🫙",v:1,nota:""},{n:"Crema alpura",e:"🥛",v:1,nota:""},
+    {n:"Clavel",e:"🥛",v:1,nota:""},{n:"Cocoa",e:"🍫",v:1,nota:""},{n:"Crema batida",e:"🍦",v:1,nota:""}
+  ]},
+  {cat:"Toppings", icon:"🍫", items:[
+    {n:"Oreo",e:"🍪",v:0,nota:""},{n:"Kranky",e:"🌾",v:0,nota:""},{n:"Lunetas",e:"🍬",v:0,nota:""},
+    {n:"Granillo colores",e:"🎊",v:1,nota:""},{n:"Granillo chocolate",e:"🍫",v:1,nota:""},
+    {n:"Coco",e:"🥥",v:1,nota:""},{n:"Nuez",e:"🥜",v:1,nota:""},{n:"Granola",e:"🌾",v:1,nota:""}
+  ]}
+];
+
+var filtroActual = "todos";
+var busquedaActual = "";
+var modalCat = -1;
+var modalItem = -1;
+
+function guardar(){
+  try{
+    var d={};
+    for(var i=0;i<INV.length;i++) for(var j=0;j<INV[i].items.length;j++){
+      var k=INV[i].cat+"|"+INV[i].items[j].n;
+      d[k]={v:INV[i].items[j].v, nota:INV[i].items[j].nota||""};
+    }
+    localStorage.setItem("od_stock2",JSON.stringify(d));
+  }catch(e){}
+}
+
+function cargar(){
+  try{
+    var d=localStorage.getItem("od_stock2");
+    if(!d) return;
+    var s=JSON.parse(d);
+    for(var i=0;i<INV.length;i++) for(var j=0;j<INV[i].items.length;j++){
+      var k=INV[i].cat+"|"+INV[i].items[j].n;
+      if(s[k]){INV[i].items[j].v=s[k].v; INV[i].items[j].nota=s[k].nota||"";}
+    }
+    var dark=localStorage.getItem("od_stock_dark");
+    if(dark==="1") document.body.classList.add("dark");
+  }catch(e){}
+}
+
+function toggleDark(){
+  document.body.classList.toggle("dark");
+  var on=document.body.classList.contains("dark");
+  try{localStorage.setItem("od_stock_dark",on?"1":"0");}catch(e){}
+}
+
+window.onload=function(){
+  cargar();
+  render();
+  stats();
+};
+
+function itemVisible(item){
+  if(filtroActual==="falta" && item.v===1) return false;
+  if(filtroActual==="hay" && item.v===0) return false;
+  if(busquedaActual && item.n.toLowerCase().indexOf(busquedaActual.toLowerCase())<0) return false;
+  return true;
+}
+
+function render(){
+  var cont=document.getElementById("secciones");
+  cont.innerHTML="";
+  var hayResultados=false;
+  for(var i=0;i<INV.length;i++){
+    var cat=INV[i];
+    var visibles=cat.items.filter(itemVisible);
+    if(visibles.length===0) continue;
+    hayResultados=true;
+    var faltan=cat.items.filter(function(it){return it.v===0;}).length;
+    var sec=document.createElement("div");
+    sec.className="seccion";
+    sec.setAttribute("data-ci",i);
+    var bodyId="body-"+i;
+    var arrowId="arrow-"+i;
+    var bc=faltan>0?"sec-badge falta":"sec-badge ok";
+    var bt=faltan>0?faltan+" falta":"Todo ok";
+    sec.innerHTML='<div class="sec-header" onclick="toggleSec('+i+')">'+
+      '<div class="sec-left"><span class="sec-icon">'+cat.icon+'</span>'+
+      '<span class="sec-title-txt">'+cat.cat+'</span></div>'+
+      '<div class="sec-right"><span class="'+bc+'" id="badge-'+i+'">'+bt+'</span>'+
+      '<span class="sec-arrow open" id="'+arrowId+'">▶</span></div></div>'+
+      '<div class="sec-body open" id="'+bodyId+'"></div>';
+    cont.appendChild(sec);
+    var body=document.getElementById(bodyId);
+    for(var j=0;j<visibles.length;j++){
+      var it=visibles[j];
+      var realJ=cat.items.indexOf(it);
+      body.appendChild(crearItem(i,realJ,it));
+    }
+  }
+  if(!hayResultados){
+    var empty=document.createElement("div");
+    empty.className="empty-search";
+    empty.textContent="No se encontraron productos 🔍";
+    cont.appendChild(empty);
+  }
+}
+
+function crearItem(ci,ii,it){
+  var div=document.createElement("div");
+  div.className="prod-item "+(it.v===1?"hay":"no");
+  div.setAttribute("data-ci",ci);
+  div.setAttribute("data-ii",ii);
+  div.onclick=function(){abrirModal(ci,ii);};
+  var nota=it.nota?'<div class="prod-note falta-txt">📝 '+it.nota+'</div>':'';
+  if(it.v===1 && it.nota) nota='<div class="prod-note">📝 '+it.nota+'</div>';
+  div.innerHTML='<div class="prod-emoji">'+it.e+'</div>'+
+    '<div class="prod-info"><div class="prod-name">'+it.n+'</div>'+nota+'</div>'+
+    '<button class="tog-grande '+(it.v===1?"on":"off")+'" data-ci="'+ci+'" data-ii="'+ii+'" onclick="flipQuick(event,this)">'+
+    '<span class="tog-label tog-si" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:800;color:#fff">SÍ</span>'+
+    '<span class="tog-label tog-no" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:800;color:#fff">NO</span>'+
+    '</button>';
+  return div;
+}
+
+function flipQuick(e,btn){
+  e.stopPropagation();
+  var ci=parseInt(btn.getAttribute("data-ci"));
+  var ii=parseInt(btn.getAttribute("data-ii"));
+  INV[ci].items[ii].v=INV[ci].items[ii].v===1?0:1;
+  guardar(); render(); stats();
+}
+
+function toggleSec(ci){
+  var body=document.getElementById("body-"+ci);
+  var arrow=document.getElementById("arrow-"+ci);
+  if(!body) return;
+  var open=body.classList.contains("open");
+  body.className="sec-body"+(open?"":" open");
+  arrow.className="sec-arrow"+(open?"":" open");
+}
+
+function stats(){
+  var total=0,ok=0,no=0;
+  for(var i=0;i<INV.length;i++) for(var j=0;j<INV[i].items.length;j++){
+    total++;
+    if(INV[i].items[j].v===1) ok++; else no++;
+  }
+  document.getElementById("s-total").textContent=total;
+  document.getElementById("s-ok").textContent=ok;
+  document.getElementById("s-no").textContent=no;
+}
+
+function filtrar(f,pill){
+  filtroActual=f;
+  busquedaActual="";
+  document.getElementById("buscador").value="";
+  var pills=document.querySelectorAll(".fpill");
+  for(var i=0;i<pills.length;i++) pills[i].classList.remove("active");
+  pill.classList.add("active");
+  render();
+}
+
+function buscar(val){
+  busquedaActual=val;
+  filtroActual="todos";
+  var pills=document.querySelectorAll(".fpill");
+  for(var i=0;i<pills.length;i++) pills[i].classList.remove("active");
+  pills[0].classList.add("active");
+  render();
+}
+
+// MODAL
+function abrirModal(ci,ii){
+  modalCat=ci; modalItem=ii;
+  var it=INV[ci].items[ii];
+  document.getElementById("m-emoji").textContent=it.e;
+  document.getElementById("m-title").textContent=it.n;
+  document.getElementById("m-sub").textContent=INV[ci].cat;
+  document.getElementById("m-note").value=it.nota||"";
+  actualizarModalTog(it.v===1);
+  document.getElementById("overlay").className="overlay open";
+  document.getElementById("modal").className="modal-inner open";
+  setTimeout(function(){document.getElementById("m-note").focus();},400);
+}
+
+function actualizarModalTog(on){
+  var tog=document.getElementById("m-tog");
+  var status=document.getElementById("m-status");
+  tog.className="tog-grande-modal "+(on?"on":"off");
+  status.className="modal-status "+(on?"on":"off");
+  status.textContent=on?"✅ Sí hay":"❌ No hay";
+}
+
+function flipModal(){
+  var tog=document.getElementById("m-tog");
+  var on=tog.classList.contains("on");
+  actualizarModalTog(!on);
+}
+
+function guardarModal(){
+  if(modalCat<0||modalItem<0) return;
+  var tog=document.getElementById("m-tog");
+  var on=tog.classList.contains("on");
+  INV[modalCat].items[modalItem].v=on?1:0;
+  INV[modalCat].items[modalItem].nota=document.getElementById("m-note").value.trim();
+  guardar(); render(); stats(); cerrarModal();
+}
+
+function cerrarModal(){
+  document.getElementById("overlay").className="overlay";
+  document.getElementById("modal").className="modal-inner";
+  modalCat=-1; modalItem=-1;
+}
+
+function compartirFalta(){
+  var faltan=[];
+  for(var i=0;i<INV.length;i++){
+    var cat=INV[i];
+    var cf=[];
+    for(var j=0;j<cat.items.length;j++){
+      var it=cat.items[j];
+      if(it.v===0) cf.push(it.n+(it.nota?" ("+it.nota+")":""));
+    }
+    if(cf.length>0) faltan.push(cat.cat+":\n"+cf.map(function(x){return "  • "+x;}).join("\n"));
+  }
+  if(!faltan.length){
+    var div=document.createElement("div");
+    div.style.cssText="position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a9a5a;color:#fff;padding:12px 24px;border-radius:30px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.2)";
+    div.textContent="✅ No falta nada!";
+    document.body.appendChild(div);
+    setTimeout(function(){div.remove();},2000);
+    return;
+  }
+  var txt="🛒 Restock Ojo Dulce:\n\n"+faltan.join("\n\n");
+  if(navigator.share) navigator.share({text:txt}).catch(function(){});
+  else if(navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){
+    var div=document.createElement("div");
+    div.style.cssText="position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#e8194b;color:#fff;padding:12px 24px;border-radius:30px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;z-index:999;box-shadow:0 4px 20px rgba(232,25,75,0.4)";
+    div.textContent="📋 Lista copiada!";
+    document.body.appendChild(div);
+    setTimeout(function(){div.remove();},2000);
+  }).catch(function(){prompt("Copia:",txt);});
+  else prompt("Copia:",txt);
+}
+</script>
+</body>
+</html>

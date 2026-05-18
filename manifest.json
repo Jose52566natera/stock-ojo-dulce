@@ -1,0 +1,22 @@
+{
+  "name": "Stock Ojo Dulce",
+  "short_name": "Ojo Dulce",
+  "description": "Control de inventario Ojo Dulce",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f8f0f5",
+  "theme_color": "#e8194b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
